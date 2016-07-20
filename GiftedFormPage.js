@@ -1,0 +1,192 @@
+'use strict';
+
+import React, {Component} from 'react'
+import{
+  AppRegistry,
+  ToastAndroid,
+  View
+} from 'react-native';
+
+var {GiftedForm, GiftedFormManager} = require('react-native-gifted-form');
+import Toolbar from './components/android_toolbar';
+
+class GiftedFormPage extends Component{
+
+  render() {
+    return (
+      <View>
+
+      <Toolbar title={this.props.title}>
+      </Toolbar>
+
+      <GiftedForm
+        formName='signupForm' // GiftedForm instances that use the same name will also share the same states
+
+        clearOnClose={false} // delete the values of the form when unmounted
+
+        validators={{
+          fullName: {
+            title: 'Full name',
+            validate: [{
+              validator: 'isLength',
+              arguments: [1, 23],
+              message: '{TITLE} must be between {ARGS[0]} and {ARGS[1]} characters'
+            }]
+          },
+          username: {
+            title: 'Username',
+            validate: [{
+              validator: 'isLength',
+              arguments: [3, 16],
+              message: '{TITLE} must be between {ARGS[0]} and {ARGS[1]} characters'
+            },{
+              validator: 'matches',
+              arguments: /^[a-zA-Z0-9]*$/,
+              message: '{TITLE} can contains only alphanumeric characters'
+            }]
+          },
+          password: {
+            title: 'Password',
+            validate: [{
+              validator: 'isLength',
+              arguments: [6, 16],
+              message: '{TITLE} must be between {ARGS[0]} and {ARGS[1]} characters'
+            }]
+          },
+          emailAddress: {
+            title: 'Email address',
+            validate: [{
+              validator: 'isLength',
+              arguments: [6, 255],
+            },{
+              validator: 'isEmail',
+            }]
+          },
+          date: {
+            title: 'Date',
+            validate: [{
+
+            }]
+          },
+      }}
+      >
+
+        <GiftedForm.SeparatorWidget />
+        <GiftedForm.TextInputWidget
+          name='fullName' // mandatory
+          title='Full name'
+
+          image={require('./icons/color/user.png')}
+
+          placeholder=''
+          clearButtonMode='while-editing'
+        />
+
+
+        <GiftedForm.TextInputWidget
+          name='username'
+          title='Username'
+          image={require('./icons/color/contact_card.png')}
+
+          placeholder=''
+          clearButtonMode='while-editing'
+
+          onTextInputFocus={(currentText = '') => {
+            if (!currentText) {
+              let fullName = GiftedFormManager.getValue('signupForm', 'fullName');
+              if (fullName) {
+                return fullName.replace(/[^a-zA-Z0-9-_]/g, '');
+              }
+            }
+            return currentText;
+          }}
+        />
+
+        <GiftedForm.TextInputWidget
+          name='password' // mandatory
+          title='Password'
+
+          placeholder=''
+
+          clearButtonMode='while-editing'
+          secureTextEntry={true}
+          image={require('./icons/color/lock.png')}
+        />
+
+        <GiftedForm.TextInputWidget
+          name='emailAddress' // mandatory
+          title='Email address'
+          placeholder=''
+
+          keyboardType='email-address'
+
+          clearButtonMode='while-editing'
+
+          image={require('./icons/color/email.png')}
+        />
+
+        <GiftedForm.TextInputWidget
+          name='date' // mandatory
+          title='Date'
+          placeholder=''
+          clearButtonMode='while-editing'
+
+          image={require('./icons/color/birthday.png')}
+        />
+
+        <GiftedForm.SeparatorWidget />
+
+
+        <GiftedForm.SubmitWidget
+          title='Sign up'
+          // widgetStyles={{
+          //   submitButton: {
+          //     backgroundColor: themes.mainColor,
+          //   }
+          // }}
+          onSubmit={(isValid, values, validationResults, postSubmit = null, modalNavigator = null) => {
+            if (isValid === true) {
+              // prepare object
+              values.gender = values.gender[0];
+              values.birthday = moment(values.birthday).format('YYYY-MM-DD');
+
+              ToastAndroid.show('This is a toast with short duration', ToastAndroid.SHORT);
+
+              /* Implement the request to your server using values variable
+              ** then you can do:
+              ** postSubmit(['An error occurred, please try again']); // disable the loader and display an error message
+              ** postSubmit(['Username already taken', 'Email already taken']); // disable the loader and display an error message
+              ** GiftedFormManager.reset('signupForm'); // clear the states of the form manually. 'signupForm' is the formName used
+              */
+
+              //postSubmit();
+            }else{
+              ToastAndroid.show('This is a toast with short duration with empty ones', ToastAndroid.SHORT);
+              /*this._navigate();*/
+            }
+          }}
+
+        />
+
+        <GiftedForm.NoticeWidget
+          title='By signing up, you agree to the Terms of Service and Privacy Policity.'
+        />
+
+        <GiftedForm.HiddenWidget name='tos' value={true} />
+
+      </GiftedForm>
+      </View>
+    );
+  }
+
+  _navigate(){
+    this.props.navigator.push(
+      {
+      id:'LoginPage'
+      }
+    );
+  }
+
+}
+
+module.exports = GiftedFormPage;

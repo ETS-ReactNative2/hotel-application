@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DemoReactApp</string>
+    <string name="map_api_key">AIzaSyA5Sjn4yuQxYshz-eYOp_ihGuclBO1V27c</string>
+    <!--<string name="map_api_key">AIzaSyCQdZxaEJbrpvONPLvFA_PvG8qnCa6Hfic</string>-->
+</resources>
